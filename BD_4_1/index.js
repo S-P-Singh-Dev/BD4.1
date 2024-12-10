@@ -46,9 +46,18 @@ app.get("/movies", async (req, res) => {
 });
 
 app.get("/movies/genre/:genre", async (req, res) => {
-  let genre = req.params.genre;
-  let result = await fetchMoviesByGenre(genre);
-  res.status(200).json(result);
+  try {
+    let genre = req.params.genre;
+    let result = await fetchMoviesByGenre(genre);
+
+    if (result.movies.length === 0) {
+      res.status(404).json({ message: "No movies found" });
+    } else {
+      res.status(200).json(result);
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.get("/movies/details/:id", async (req, res) => {
